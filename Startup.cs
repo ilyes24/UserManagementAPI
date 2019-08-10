@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 using UserManagement.Helpers;
 using UserManagement.Services;
 
@@ -30,6 +31,19 @@ namespace UserManagement
             services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2); ;
             services.AddAutoMapper();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "UserManagementApi",
+                    Description = "APS.NET Core 2.2 for User Management (registration, authentication, retrieve all, retrieve by id, update and delete)",
+                    TermsOfService = "None",
+                    Contact = new Contact() { Name = "GHOMRANI Ilyes", Email = "i.ghomrani@esi-sba.dz"}
+                });
+            });
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -87,6 +101,16 @@ namespace UserManagement
             app.UseAuthentication();
 
             app.UseMvc();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserManagementApi");
+            });
         }
     }
 }
